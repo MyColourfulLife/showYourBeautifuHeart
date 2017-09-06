@@ -712,33 +712,29 @@ var wordsList = [
     }
   ];
 
+//   定义新的列表存储更改过的心里话
 var newList = []
-
+// 循环列表
   wordsList.forEach(function(obj) {
     //处理图片链接不规范
+    // 数据里 有 avatar 和  photograph 就直接判断了
     var avatar = obj.avatar
     if (avatar === undefined) {
-        console.log(obj)
+        // 如果不是avatar 就讲photograph改为 avatar
        avatar = obj.photograph
     } 
-
+// 如果包含括号
     if (avatar.includes('(') && avatar.includes(')')) {
-        console.log(avatar)
+        // 先分离出左边括号 再分离右边括号 
         var newAvatar = avatar.split('(')[1].split(')')[0]
-        console.log(newAvatar)
         obj.avatar = newAvatar
-        console.log(obj.avatar)
-        console.log("++++++++++++++++++++++")
     }
-
+// 将处理过的和无需处理的放入新的数组
     newList.push(obj)
 
   }, this);
 
-  console.log("=====================")
-
-
-
+// 把新的数组写入文件
   jsonFile.writeFile('./all_words.json',newList,{spaces:2},function (err) {
     if (err) {
         console.log('文件写入失败:%s',err)

@@ -4,8 +4,10 @@
   margin-bottom: 30px;
   font-size: 24px;
   text-align: left;
-  background-color: #6f5499;
+  background: url(http://staticcdn.igetget.com/www/newpc/dist/img/downlod-bg.5aac54d.png) 50% no-repeat;
+  background-size: cover;
 }
+
 
 .main-header h1 {
   margin-top: 0;
