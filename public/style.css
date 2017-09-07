@@ -43,3 +43,15 @@
   color: #fff;
   text-align:center 
 }
+
+#wanttotalk  div {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#wanttotalk button {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+
+}

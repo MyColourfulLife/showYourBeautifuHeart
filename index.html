@@ -55,6 +55,35 @@
 
             <!-- 右侧内容区 -->
             <div class="panel panel-default col-md-4">
+
+                <!-- 我想对老师说 -->
+                <div class="panel-heading">
+                    <h3 class="panel-title">老师，我想对你说</h3>
+                </div>
+                <div class="panel-body" id="wanttotalk">
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">姓名</span>
+                        <input type="text" class="form-control" v-model="name" placeholder="报上名来" aria-describedby="basic-addon1">
+                    </div>
+
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">账号</span>
+                        <input type="text" class="form-control" v-model="account" placeholder="注册用的手机或邮箱" aria-describedby="basic-addon1">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">内容</span>
+                        <input type="text" class="form-control" v-model="content" placeholder="想说就说" aria-describedby="basic-addon1">
+                    </div>
+
+                    <button v-on:click="sendToTecher" class="btn btn-primary ">发给老师</button>
+
+                </div>
+
+
+
                 <!-- 玩的是技术 -->
                 <div class="panel-heading">
                     <h3 class="panel-title">玩的就是技术</h3>
@@ -122,7 +151,10 @@
             wordsList: [],  // 变量wordsList可以在html使用
             tecdocs: {
 
-            }
+            },
+            name: "",
+            account: "",
+            content: ""
         },
         methods: {
             // 请求技术文档数据
@@ -140,19 +172,64 @@
             },
 
             // 请求心里话数据
-            fectchHeartData: function(){
+            fectchHeartData: function () {
                 axios.get('https://js.xinshengdaxue.com/api/v1/learnJS/course/1/words')
-                .then(function (res) {
-                    app.wordsList = res.data.words
+                    .then(function (res) {
+                        var newList = []
+                        // 循环列表
+                        res.data.words.forEach(function (obj) {
+                            //处理图片链接不规范
+                            // 数据里 有 avatar 和  photograph 就直接判断了
+                            var avatar = obj.avatar
+                            if (avatar === undefined) {
+                                // 如果不是avatar 就讲photograph改为 avatar
+                                avatar = obj.photograph
+                            }
+                            // 如果包含括号
+                            if (avatar.includes('(') && avatar.includes(')')) {
+                                // 先分离出左边括号 再分离右边括号 
+                                var newAvatar = avatar.split('(')[1].split(')')[0]
+                                obj.avatar = newAvatar
+                            }
+                            // 将处理过的和无需处理的放入新的数组
+                            newList.push(obj)
+
+                        }, this);
+
+                        app.wordsList = newList;
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            },
+
+            // 发送消息给老师
+            sendToTecher: function () {
+
+                if (!(this.name && this.account && this.content)) {
+                    alert('以上三个为必填内容');
+                    return;
+                }
+
+                console.log(this.name, this.account, this.content)
+
+                axios.post('https://js.xinshengdaxue.com/api/v1/learnJS/sayToMe', {
+                    name: this.name,
+                    account: this.account,
+                    content: this.content
                 })
-                .catch(function (err) {
-                    console.log(err)
-                });
+                    .then(function (res) {
+                        console.log(res)
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                    })
             }
+
         }
     });
 
-app.fectchHeartData();
-app.fectchTecdocsData();
+    app.fectchHeartData();
+    app.fectchTecdocsData();
 
 </script>
