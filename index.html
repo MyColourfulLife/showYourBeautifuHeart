@@ -116,80 +116,43 @@
 <script>
     // vue官网： https://cn.vuejs.org/v2/guide/
     // 初始化Vue
-
-    // 把收集的数据放在这里
-    //心里话
-    //   定义新的列表存储更改过的心里话
-    var newList = []
-
-
-    axios.get('https://js.xinshengdaxue.com/api/v1/learnJS/course/1/words')
-        .then(function (response) {
-
-            // console.log(response)
-
-            if (response.status === 200) {//正常
-
-                var wordsList = response['data']['words']
-                // 循环列表
-                wordsList.forEach(function (obj) {
-                    //处理图片链接不规范
-                    // 数据里 有 avatar 和  photograph 就直接判断了
-                    var avatar = obj.avatar
-                    if (avatar === undefined) {
-                        // 如果不是avatar 就讲photograph改为 avatar
-                        avatar = obj.photograph
-                    }
-                    // 如果包含括号
-                    if (avatar.includes('(') && avatar.includes(')')) {
-                        // 先分离出左边括号 再分离右边括号 
-                        var newAvatar = avatar.split('(')[1].split(')')[0]
-                        obj.avatar = newAvatar
-                    }
-                    // 将处理过的和无需处理的放入新的数组
-                    newList.push(obj)
-
-                }, this);
-
-            } else {
-                alert('获取内容失败')
-            }
-
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-
-    // 请求topic列表
-    var catelog = {};
-    // var mytecdocs = []
-    axios.get('https://js.xinshengdaxue.com/api/v1/learnJS/course/1/catelog').then(function (res) {
-
-        if (res.status === 200) {
-            // 获取TopicsList
-            //1. 直接赋值 结果无法在HTML上渲染出来
-            // mytecdocs = res.data.catelog.gitTopicsList 
-            // // 2. 追加数据 就可以在THML上渲染出来了
-            // res.data.catelog.gitTopicsList.forEach(function(element) {
-            //     mytecdocs.push(element)
-            // }, this);
-            catelog.gitTopicsList = res.data.catelog.gitTopicsList
-            catelog.pptList = res.data.catelog.pptList
-            catelog.topicsList = res.data.catelog.topicsList
-
-        } else {
-            console.log('获取内容失败')
-        }
-    }).catch(function (err) {
-        console.log(err)
-    })
-
-    var myvue = new Vue({
+    var app = new Vue({
         el: '#app',   // #app 和html中div#id的 app 对应
         data: {
-            wordsList: newList,  // 变量wordsList可以在html使用
-            tecdocs: catelog
+            wordsList: [],  // 变量wordsList可以在html使用
+            tecdocs: {
+
+            }
+        },
+        methods: {
+            // 请求技术文档数据
+            fectchTecdocsData: function () {
+                axios.get('https://js.xinshengdaxue.com/api/v1/learnJS/course/1/catelog').then(function (res) {
+
+                    if (res.status === 200) {
+                        app.tecdocs = res.data.catelog
+                    } else {
+                        console.log('获取内容失败')
+                    }
+                }).catch(function (err) {
+                    console.log(err)
+                })
+            },
+
+            // 请求心里话数据
+            fectchHeartData: function(){
+                axios.get('https://js.xinshengdaxue.com/api/v1/learnJS/course/1/words')
+                .then(function (res) {
+                    app.wordsList = res.data.words
+                })
+                .catch(function (err) {
+                    console.log(err)
+                });
+            }
         }
     });
+
+app.fectchHeartData();
+app.fectchTecdocsData();
 
 </script>
