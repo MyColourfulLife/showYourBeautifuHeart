@@ -55,3 +55,13 @@
   width: 100%;
 
 }
+
+a {
+  color:black;
+  text-decoration: none;
+}
+
+h3 a {
+  float: right;
+  color: green;
+}
